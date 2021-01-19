@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage{xcolor}
+\usepackage{listings}
+\input{defs.tex}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+\usepackage[utf8]{inputenc}
+\title{%
+  System And Languages for Informatics \\
+  \large Cybersecurity LM-66}
+
+\author{Samuele Padula}
+\date{Gennaio 2021}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduzione}
+È stato realizzato un interprete in OCaml per un ridotto linguaggio di programmazione funzionale. L’intero interprete con solamente typechecking dinamico e comprensivo dei test effettuati, è contenuto in un unico file sorgente "interprete\_dinamico.ml". Nel file "interprete\_statico.ml" è stato invece sviluppato l'interprete con typechecking statico rimuovendo tutti i controlli di tipo dinamici compiuti in precedenza dalla 'eval'.  L'interprete visto a lezione è stato esteso con la possibilità di creare e manipolare gli insiemi. Gli insiemi possono contenere solamente Interi, Stringhe e Booleani.
+Per eseguire la batteria di test si può usare il comando ocaml (il tutto è stato simulato e sviluppato in ambiente Linux Ubuntu 18.04 ocaml 4.05):
+
+\begin{lstlisting}[language=bash]
+$ocaml interprete_dinamico.ml
+ocaml interprete_statico.ml
+\end{lstlisting}
+
+\section{Regole operazionali (Set)}
+\subsection{Introduzione del tipo di dato Set}
+~\\~\\
+\infr
+  {\\env \vartriangleright{} e \implies t:String\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{EmptySet(e)} \implies Set(t,\emptyset) }
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies t:String\ \ \ \ t \in \{"int", "bool", "string"\},  env \vartriangleright{} e_2 \implies v:t}     
+  {\\env \vartriangleright{} \bold{Singleton(e_1,e_2)} \implies Set(t,{v}) }  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies t:String\ \ \ \ t \in \{"int", "bool", "string"\},  env \vartriangleright{} e_2 \implies (v_1...v_n):t}     
+  {\\env \vartriangleright{} \bold{Of(e_1,e_2)} \implies Set(t,\{v_1...v_n\}) }  
+
+\subsection{Operazioni sul tipo di dato Set}
+\subsubsection{Operazioni di base}
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s1), env \vartriangleright{} e_2 \implies Set(t,s2)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Union(e_1,e_2)} \implies Set(t,\{s_1 \cup s_2\}) }  
+~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s1), env \vartriangleright{} e_2 \implies Set(t,s2)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Intersection(e_1,e_2)} \implies Set(t,\{s_1 \cap s_2\}) }  
+~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s1), env \vartriangleright{} e_2 \implies Set(t,s2)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Difference(e_1,e_2)} \implies Set(t,\{s_1 \setminus s_2\}) }  
+\subsubsection{Operazioni aggiuntive}
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies v:t\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Insert(e_1,e_2)} \implies Set(t, s \cup \{v\}) }  
+~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies v:t\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Remove(e_1,e_2)} \implies Set(t, s \setminus \{v\}) }  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies v:t\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Contains(e_1,e_2)} \implies Bool(v \in s) }  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies v:t\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Subset(e_1,e_2)} \implies Bool(\forall{x} \in s) }  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e \implies Set(t,s)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{IsEmpty(e)} \implies Bool(s = \emptyset) }  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e \implies Set(t,s)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{MinOf(e)} \implies min(s):t  }
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e \implies Set(t,s)\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{MaxOf(e)} \implies max(s):t }
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies f: t \xrightarrow{} Boolean\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{ForAll(e_1,e_2)} \implies Bool(\forall{x} \in s, Apply(e_2,x) \implies Bool(true))}  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies f: t \xrightarrow{} Boolean\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Exists(e_1,e_2)} \implies Bool(\exists{x} \in s, Apply(e_2,x) \implies Bool(true))}  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t,s), env \vartriangleright{} e_2 \implies f: t \xrightarrow{} Boolean\ \ \ \ t \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Filter(e_1,e_2)} \implies Set(t,\{x \in s, Apply(e_2,x) \implies Bool(true)\}}  
+~\\~\\~\\~\\
+\infr
+  {\\env \vartriangleright{} e_1 \implies Set(t_1,s), env \vartriangleright{} e_2 \implies f: t_1 \xrightarrow{} t_2\ \ \ \  t_1,t_2 \in \{"int", "bool", "string"\}}     
+  {\\env \vartriangleright{} \bold{Map(e_1,e_2)} \implies Set(t_2,\{Apply(e_2,x \in s)\}}  
+~\\~\\~\\~\\
+
+
+\end{document}
